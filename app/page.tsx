@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import PanoramaViewer from "./PanoramaViewer";
 
 export default function Home() {
   const topbarRef = useRef<HTMLDivElement>(null);
@@ -212,11 +213,15 @@ export default function Home() {
           <div className="swipe reveal">
             <div className="frame">
               <div className="frame__label">Было</div>
-              <div className="frame__body"><span>Здесь будет скриншот карточки клиента до оформления</span></div>
+              <div className="frame__body frame__body--photo">
+                <img src="/images/before-after/yandex-card.jpg" alt="Карточка на Яндекс Картах" />
+              </div>
             </div>
             <div className="frame frame--after">
               <div className="frame__label">Стало</div>
-              <div className="frame__body"><span>Здесь будет скриншот карточки клиента после оформления</span></div>
+              <div className="frame__body frame__body--photo">
+                <img src="/images/before-after/2gis-card.jpg" alt="Карточка в 2ГИС" />
+              </div>
             </div>
           </div>
           <div className="container"><p className="swipe-hint reveal">← пролистните, чтобы сравнить</p></div>
@@ -266,8 +271,8 @@ export default function Home() {
               <span className="eyebrow">Отдельная услуга</span>
               <h2>Панорама — это как зайти внутрь ещё до приезда</h2>
             </div>
-            <div className="pano-visual reveal" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7" /><path d="M21 3v6h-6" /></svg>
+            <div className="pano-visual reveal">
+              <PanoramaViewer src="/images/panorama/shop-360.jpg" />
             </div>
             <p className="reveal">Человек открывает карточку, крутит панораму пальцем и видит зал, стол, интерьер — и уже решает, ехать к вам или нет. Для кафе, стоматологий и салонов это часто решающий момент перед звонком.</p>
             <div className="pano-price reveal">Панорама 360° — <b>7 000 ₽</b><span>за точку</span></div>
