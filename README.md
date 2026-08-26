@@ -1,0 +1,80 @@
+# Карты 05 — лендинг
+
+Next.js (App Router) + TypeScript + Prisma + Neon. Форма заявки сохраняет лид в базу
+и присылает уведомление в Telegram.
+
+## Стек
+
+- Next.js 14 (App Router), TypeScript
+- Prisma + Neon (Postgres)
+- Деплой на Vercel
+
+## Переменные окружения
+
+Локально — файл `.env.local` (не коммитится), на проде — Vercel Project Settings → Environment Variables.
+Полный список имён — в `.env.example`.
+
+| Переменная | Назначение |
+|---|---|
+| `DATABASE_URL` | строка подключения к Neon (Postgres) |
+| `TELEGRAM_BOT_TOKEN` | токен Telegram-бота от @BotFather |
+| `TELEGRAM_CHAT_ID` | chat_id, куда бот шлёт уведомления о заявках |
+
+## Локальный запуск
+
+```bash
+npm install
+cp .env.example .env.local   # и заполнить значения
+npx prisma generate
+npm run dev
+```
+
+## Шаги для продакшена
+
+### 1. Создать Telegram-бота и узнать chat_id
+
+1. В Telegram открыть [@BotFather](https://t.me/BotFather), выполнить `/newbot`, следовать инструкциям —
+   в ответ придёт `TELEGRAM_BOT_TOKEN`.
+2. Написать своему новому боту любое сообщение (иначе он не сможет писать вам первым).
+3. Открыть в браузере:
+   `https://api.telegram.org/bot<TELEGRAM_BOT_TOKEN>/getUpdates`
+4. В ответе найти `"chat":{"id": ...}` — это `TELEGRAM_CHAT_ID`.
+   Если для получения заявок нужен групповой чат — добавить бота в группу, написать туда
+   любое сообщение и повторить запрос `getUpdates`; id группы будет отрицательным числом.
+
+### 2. Завести базу на Neon
+
+1. Зарегистрироваться / зайти на [neon.tech](https://neon.tech), создать новый проект.
+2. Скопировать connection string (Pooled connection) — это и есть `DATABASE_URL`.
+
+### 3. Накатить миграцию вручную
+
+**Важно:** `prisma migrate deploy` не запускается ни в CI, ни при сборке на Vercel.
+Миграции применяются вручную через Neon SQL Editor.
+
+1. Открыть Neon SQL Editor для своей базы.
+2. Выполнить содержимое файла `prisma/migrations/20260826000000_init/migration.sql`
+   (создаёт таблицу `Lead`).
+3. Если схема будет меняться в будущем — добавлять новую миграцию тем же способом:
+   писать SQL вручную (или сгенерировать через `prisma migrate diff` локально) и
+   выполнять его в Neon SQL Editor, не через `migrate deploy`.
+
+### 4. Задеплоить на Vercel
+
+1. Импортировать репозиторий в Vercel.
+2. В Project Settings → Environment Variables добавить `DATABASE_URL`,
+   `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` (для Production и Preview).
+3. Build command: `prisma generate && next build` (уже прописан в `package.json`,
+   Vercel подхватит его автоматически). Start command — стандартный `next start`,
+   Vercel запускает его сам.
+4. Задеплоить. Миграция к этому моменту уже должна быть накатана вручную (шаг 3) —
+   без этого API `/api/lead` не сможет писать в таблицу `Lead`.
+
+## Форма заявки
+
+- `POST /api/lead` — валидирует имя и телефон (минимум 10 цифр), сохраняет лид в Neon
+  через Prisma, отправляет уведомление в Telegram.
+- Если отправка в Telegram упала — лид всё равно сохраняется, ошибка Telegram только
+  логируется.
+- Скрытое honeypot-поле (`company`) защищает от простых ботов: если оно заполнено,
+  запрос молча считается успешным без сохранения в базу.
