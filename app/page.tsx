@@ -107,6 +107,7 @@ export default function Home() {
             <div className="hero__trust">
               <span>кафе</span><span>стоматологии</span><span>автосервисы</span><span>магазины</span><span>услуги для дома</span>
             </div>
+            <p className="hero__coords">42.98° N, 47.50° E — Махачкала</p>
           </div>
         </section>
 
@@ -150,41 +151,51 @@ export default function Home() {
               <span className="eyebrow">Что мы делаем</span>
               <h2>Всё, что нужно карточке, чтобы приводить клиентов</h2>
             </div>
-            <div className="chip-grid reveal">
-              <div className="chip">
-                <div className="chip__icon">
+            <div className="route-list reveal">
+              <div className="route-row">
+                <div className="route-row__mark">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 7h3l2-3h6l2 3h3v12H4z" /><circle cx="12" cy="13" r="3.5" /></svg>
                 </div>
-                <h3>Оформление карточки</h3>
-                <p>Фото, описание, категории, услуги, режим работы</p>
+                <div>
+                  <h3>Оформление карточки</h3>
+                  <p>Фото, описание, категории, услуги, режим работы</p>
+                </div>
               </div>
-              <div className="chip">
-                <div className="chip__icon">
+              <div className="route-row">
+                <div className="route-row__mark">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18" /><path d="M7 15l4-5 3 3 5-7" /></svg>
                 </div>
-                <h3>Продвижение</h3>
-                <p>Выше в поиске и на картах, где ищут ваших клиентов</p>
+                <div>
+                  <h3>Продвижение</h3>
+                  <p>Выше в поиске и на картах, где ищут ваших клиентов</p>
+                </div>
               </div>
-              <div className="chip">
-                <div className="chip__icon">
+              <div className="route-row">
+                <div className="route-row__mark">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7" /><path d="M21 3v6h-6" /></svg>
                 </div>
-                <h3>Панорама 360°</h3>
-                <p>3D-прогулка по вашему заведению прямо в карточке</p>
+                <div>
+                  <h3>Панорама 360°</h3>
+                  <p>3D-прогулка по вашему заведению прямо в карточке</p>
+                </div>
               </div>
-              <div className="chip">
-                <div className="chip__icon">
+              <div className="route-row">
+                <div className="route-row__mark">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
                 </div>
-                <h3>Новости и истории</h3>
-                <p>Карточка живая, а не заброшенная с прошлого года</p>
+                <div>
+                  <h3>Новости и истории</h3>
+                  <p>Карточка живая, а не заброшенная с прошлого года</p>
+                </div>
               </div>
-              <div className="chip">
-                <div className="chip__icon">
+              <div className="route-row">
+                <div className="route-row__mark">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z" /></svg>
                 </div>
-                <h3>Рост звонков и заявок из карточки</h3>
-                <p>Больше людей нажимают «Позвонить» и «Построить маршрут»</p>
+                <div>
+                  <h3>Рост звонков и заявок из карточки</h3>
+                  <p>Больше людей нажимают «Позвонить» и «Построить маршрут»</p>
+                </div>
               </div>
             </div>
           </div>
@@ -274,36 +285,16 @@ export default function Home() {
           </div>
           <div className="swipe reveal">
             <div className="review-card">
-              <div className="review-card__stars">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" /></svg>
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" /></svg>
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" /></svg>
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" /></svg>
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" /></svg>
-              </div>
+              <span className="review-card__pin" aria-hidden="true"></span>
+              <span className="review-card__rating">5.0 ★</span>
               <p>«Здесь появится отзыв вашего клиента — пришлём шаблон на согласование перед публикацией.»</p>
-              <div className="review-card__who">
-                <div className="review-card__avatar">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" /></svg>
-                </div>
-                <div><b>Имя клиента</b><span>Название заведения</span></div>
-              </div>
+              <div className="review-card__who"><b>Имя клиента</b><span>Название заведения</span></div>
             </div>
             <div className="review-card">
-              <div className="review-card__stars">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" /></svg>
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" /></svg>
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" /></svg>
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" /></svg>
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" /></svg>
-              </div>
+              <span className="review-card__pin" aria-hidden="true"></span>
+              <span className="review-card__rating">5.0 ★</span>
               <p>«Второй отзыв тоже будет здесь — соберём после первых проектов.»</p>
-              <div className="review-card__who">
-                <div className="review-card__avatar">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" /></svg>
-                </div>
-                <div><b>Имя клиента</b><span>Название заведения</span></div>
-              </div>
+              <div className="review-card__who"><b>Имя клиента</b><span>Название заведения</span></div>
             </div>
           </div>
         </section>
