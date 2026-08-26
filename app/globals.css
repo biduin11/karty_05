@@ -210,7 +210,7 @@ strong{color:inherit;font-weight:700;}
 }
 .frame__body span{font-size:12.5px;color:var(--muted-light);font-family:var(--font-m);}
 .frame__body--photo{padding:0;background:var(--paper-soft);}
-.frame__body--photo img{width:100%;height:100%;object-fit:cover;border-radius:16px;display:block;}
+.frame__body--photo img{width:100%;height:100%;object-fit:contain;border-radius:16px;display:block;}
 .frame--after .frame__body{
   background:linear-gradient(160deg, rgba(242,169,59,.16), rgba(43,175,160,.14));
 }

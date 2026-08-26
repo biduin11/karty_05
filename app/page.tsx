@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import PanoramaViewer from "./PanoramaViewer";
 
+const SHOW_REVIEWS = false;
+
 export default function Home() {
   const topbarRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
@@ -214,13 +216,13 @@ export default function Home() {
             <div className="frame">
               <div className="frame__label">Было</div>
               <div className="frame__body frame__body--photo">
-                <img src="/images/before-after/yandex-card.jpg" alt="Карточка на Яндекс Картах" />
+                <img src="/images/before-after/2gis-card.jpg" alt="Карточка в 2ГИС" />
               </div>
             </div>
             <div className="frame frame--after">
               <div className="frame__label">Стало</div>
               <div className="frame__body frame__body--photo">
-                <img src="/images/before-after/2gis-card.jpg" alt="Карточка в 2ГИС" />
+                <img src="/images/before-after/yandex-card.jpg" alt="Карточка на Яндекс Картах" />
               </div>
             </div>
           </div>
@@ -281,28 +283,30 @@ export default function Home() {
         </section>
 
         {/* ============ REVIEWS ============ */}
-        <section className="section section-dark">
-          <div className="container">
-            <div className="section-head reveal">
-              <span className="eyebrow">Что говорят</span>
-              <h2>Отзывы клиентов</h2>
+        {SHOW_REVIEWS && (
+          <section className="section section-dark">
+            <div className="container">
+              <div className="section-head reveal">
+                <span className="eyebrow">Что говорят</span>
+                <h2>Отзывы клиентов</h2>
+              </div>
             </div>
-          </div>
-          <div className="swipe reveal">
-            <div className="review-card">
-              <span className="review-card__pin" aria-hidden="true"></span>
-              <span className="review-card__rating">5.0 ★</span>
-              <p>«Здесь появится отзыв вашего клиента — пришлём шаблон на согласование перед публикацией.»</p>
-              <div className="review-card__who"><b>Имя клиента</b><span>Название заведения</span></div>
+            <div className="swipe reveal">
+              <div className="review-card">
+                <span className="review-card__pin" aria-hidden="true"></span>
+                <span className="review-card__rating">5.0 ★</span>
+                <p>«Здесь появится отзыв вашего клиента — пришлём шаблон на согласование перед публикацией.»</p>
+                <div className="review-card__who"><b>Имя клиента</b><span>Название заведения</span></div>
+              </div>
+              <div className="review-card">
+                <span className="review-card__pin" aria-hidden="true"></span>
+                <span className="review-card__rating">5.0 ★</span>
+                <p>«Второй отзыв тоже будет здесь — соберём после первых проектов.»</p>
+                <div className="review-card__who"><b>Имя клиента</b><span>Название заведения</span></div>
+              </div>
             </div>
-            <div className="review-card">
-              <span className="review-card__pin" aria-hidden="true"></span>
-              <span className="review-card__rating">5.0 ★</span>
-              <p>«Второй отзыв тоже будет здесь — соберём после первых проектов.»</p>
-              <div className="review-card__who"><b>Имя клиента</b><span>Название заведения</span></div>
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* ============ PRICING ============ */}
         <section className="section section-light">
