@@ -240,7 +240,7 @@ export default function Home() {
               <div className="tl-item">
                 <div className="tl-num">1</div>
                 <h3>Заявка</h3>
-                <p>Оставляете номер в форме ниже — перезваниваем в течение дня.</p>
+                <p>Оставляете Telegram в форме ниже — пишем в течение дня.</p>
               </div>
               <div className="tl-item">
                 <div className="tl-num">2</div>
@@ -385,12 +385,18 @@ export default function Home() {
           <div className="container">
             <div className="section-head reveal">
               <span className="eyebrow">Готовы начать?</span>
-              <h2>Оставьте заявку — перезвоним и посчитаем цену под ваш бизнес</h2>
+              <h2>Оставьте заявку — напишем в Telegram и посчитаем цену под ваш бизнес</h2>
             </div>
 
             <LeadForm />
 
-            <p className="form-note">Оставляя заявку, вы соглашаетесь на связь по указанному телефону.</p>
+            <p className="form-note">
+              Оставляя заявку, вы соглашаетесь на связь через Telegram и с{" "}
+              <a href="/privacy" style={{ textDecoration: "underline" }}>
+                политикой обработки персональных данных
+              </a>
+              .
+            </p>
           </div>
         </section>
       </main>
@@ -421,7 +427,7 @@ function LeadForm() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [nameInvalid, setNameInvalid] = useState(false);
-  const [phoneInvalid, setPhoneInvalid] = useState(false);
+  const [telegramInvalid, setTelegramInvalid] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -429,22 +435,22 @@ function LeadForm() {
     if (!form) return;
 
     const name = (form.elements.namedItem("name") as HTMLInputElement).value.trim();
-    const phone = (form.elements.namedItem("phone") as HTMLInputElement).value.trim();
+    const telegram = (form.elements.namedItem("telegram") as HTMLInputElement).value.trim();
     const company = (form.elements.namedItem("company") as HTMLInputElement).value;
-    const phoneOk = phone.replace(/\D/g, "").length >= 10;
+    const telegramOk = /^@?[A-Za-z][A-Za-z0-9_]{4,31}$/.test(telegram);
 
     setNameInvalid(!name);
-    setPhoneInvalid(!phoneOk);
+    setTelegramInvalid(!telegramOk);
     setError(null);
 
-    if (!name || !phoneOk) return;
+    if (!name || !telegramOk) return;
 
     setSending(true);
     try {
       const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, phone, company }),
+        body: JSON.stringify({ name, telegram, company }),
       });
       const data = await res.json();
       if (data.ok) {
@@ -476,16 +482,16 @@ function LeadForm() {
           />
         </div>
         <div className="field">
-          <label htmlFor="phone">Телефон</label>
+          <label htmlFor="telegram">Telegram</label>
           <input
-            type="tel"
-            id="phone"
-            name="phone"
-            placeholder="+7 900 000-00-00"
+            type="text"
+            id="telegram"
+            name="telegram"
+            placeholder="@username"
             required
             disabled={sending}
-            style={phoneInvalid ? { borderColor: "#D9634F" } : undefined}
-            onInput={() => setPhoneInvalid(false)}
+            style={telegramInvalid ? { borderColor: "#D9634F" } : undefined}
+            onInput={() => setTelegramInvalid(false)}
           />
         </div>
         {/* honeypot — скрыто от пользователей, ловит ботов */}

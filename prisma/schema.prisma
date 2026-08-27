@@ -10,6 +10,6 @@ datasource db {
 model Lead {
   id        String   @id @default(cuid())
   name      String
-  phone     String
+  telegram  String
   createdAt DateTime @default(now())
 }

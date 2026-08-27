@@ -5,9 +5,11 @@ export const runtime = "nodejs";
 
 type LeadPayload = {
   name?: unknown;
-  phone?: unknown;
+  telegram?: unknown;
   company?: unknown;
 };
+
+const TELEGRAM_USERNAME_RE = /^@?[A-Za-z][A-Za-z0-9_]{4,31}$/;
 
 function formatMoscowTime(date: Date): string {
   return new Intl.DateTimeFormat("ru-RU", {
@@ -17,7 +19,7 @@ function formatMoscowTime(date: Date): string {
   }).format(date);
 }
 
-async function notifyTelegram(name: string, phone: string, createdAt: Date) {
+async function notifyTelegram(name: string, telegram: string, createdAt: Date) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
   if (!token || !chatId) {
@@ -28,7 +30,7 @@ async function notifyTelegram(name: string, phone: string, createdAt: Date) {
   const text = [
     "Новая заявка — Карты 05",
     `Имя: ${name}`,
-    `Телефон: ${phone}`,
+    `Telegram: ${telegram}`,
     `Время: ${formatMoscowTime(createdAt)}`,
   ].join("\n");
 
@@ -56,7 +58,7 @@ export async function POST(req: NextRequest) {
   }
 
   const name = typeof payload.name === "string" ? payload.name.trim() : "";
-  const phone = typeof payload.phone === "string" ? payload.phone.trim() : "";
+  const telegramRaw = typeof payload.telegram === "string" ? payload.telegram.trim() : "";
   const company = typeof payload.company === "string" ? payload.company.trim() : "";
 
   // Honeypot: filled by bots, invisible to real users. Pretend success, save nothing.
@@ -64,21 +66,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  const phoneDigits = phone.replace(/\D/g, "");
-
   if (!name) {
     return NextResponse.json({ ok: false, error: "Укажите имя" }, { status: 400 });
   }
-  if (phoneDigits.length < 10) {
-    return NextResponse.json({ ok: false, error: "Укажите корректный телефон" }, { status: 400 });
+  if (!TELEGRAM_USERNAME_RE.test(telegramRaw)) {
+    return NextResponse.json({ ok: false, error: "Укажите корректный Telegram-юзернейм" }, { status: 400 });
   }
+
+  const telegram = telegramRaw.startsWith("@") ? telegramRaw : `@${telegramRaw}`;
 
   try {
     const lead = await prisma.lead.create({
-      data: { name, phone },
+      data: { name, telegram },
     });
 
-    await notifyTelegram(name, phone, lead.createdAt);
+    await notifyTelegram(name, telegram, lead.createdAt);
 
     return NextResponse.json({ ok: true });
   } catch (err) {
