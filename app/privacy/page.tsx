@@ -56,12 +56,13 @@ export default function PrivacyPage() {
                 <li>ИНН: 056210792997</li>
                 <li>ОГРНИП: 322057100103540</li>
                 <li>Адрес: 367000, Россия, Республика Дагестан, г. Махачкала, ул. Ермошкина, д. 36</li>
-                <li>Контактный email: [[email]]</li>
+                <li>
+                  Контактный email:{" "}
+                  <a href="mailto:biduin11@yandex.ru" style={{ textDecoration: "underline" }}>
+                    biduin11@yandex.ru
+                  </a>
+                </li>
               </ul>
-              <p style={{ fontSize: 13, marginTop: 8 }}>
-                (Контактный email для обращений по вопросам обработки персональных данных будет
-                указан после подтверждения оператором.)
-              </p>
             </PolicyBlock>
 
             <PolicyBlock title="3. Какие данные собираются">
