@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { isValidName, isValidTelegram, normalizeTelegram, NAME_MAX_LENGTH } from "@/lib/lead";
+import { rateLimit } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 
@@ -7,9 +9,18 @@ type LeadPayload = {
   name?: unknown;
   telegram?: unknown;
   company?: unknown;
+  consent?: unknown;
 };
 
-const TELEGRAM_USERNAME_RE = /^@?[A-Za-z][A-Za-z0-9_]{4,31}$/;
+const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const DUPLICATE_WINDOW_MS = 10 * 60 * 1000;
+
+function clientIp(req: NextRequest): string {
+  const forwarded = req.headers.get("x-forwarded-for");
+  if (forwarded) return forwarded.split(",")[0].trim();
+  return req.headers.get("x-real-ip")?.trim() || "unknown";
+}
 
 function formatMoscowTime(date: Date): string {
   return new Intl.DateTimeFormat("ru-RU", {
@@ -50,6 +61,13 @@ async function notifyTelegram(name: string, telegram: string, createdAt: Date) {
 }
 
 export async function POST(req: NextRequest) {
+  if (!rateLimit(`lead:${clientIp(req)}`, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS)) {
+    return NextResponse.json(
+      { ok: false, error: "Слишком много заявок. Попробуйте позже." },
+      { status: 429 }
+    );
+  }
+
   let payload: LeadPayload;
   try {
     payload = await req.json();
@@ -69,13 +87,38 @@ export async function POST(req: NextRequest) {
   if (!name) {
     return NextResponse.json({ ok: false, error: "Укажите имя" }, { status: 400 });
   }
-  if (!TELEGRAM_USERNAME_RE.test(telegramRaw)) {
+  if (!isValidName(name)) {
+    return NextResponse.json(
+      { ok: false, error: `Имя не должно быть длиннее ${NAME_MAX_LENGTH} символов` },
+      { status: 400 }
+    );
+  }
+  if (!isValidTelegram(telegramRaw)) {
     return NextResponse.json({ ok: false, error: "Укажите корректный Telegram-юзернейм" }, { status: 400 });
   }
 
-  const telegram = telegramRaw.startsWith("@") ? telegramRaw : `@${telegramRaw}`;
+  if (payload.consent !== true) {
+    return NextResponse.json(
+      { ok: false, error: "Нужно согласие на обработку персональных данных" },
+      { status: 400 }
+    );
+  }
+
+  const telegram = normalizeTelegram(telegramRaw);
 
   try {
+    // Same Telegram username submitted again shortly after: treat as success, don't duplicate.
+    const recent = await prisma.lead.findFirst({
+      where: {
+        telegram: { equals: telegram, mode: "insensitive" },
+        createdAt: { gte: new Date(Date.now() - DUPLICATE_WINDOW_MS) },
+      },
+      select: { id: true },
+    });
+    if (recent) {
+      return NextResponse.json({ ok: true });
+    }
+
     const lead = await prisma.lead.create({
       data: { name, telegram },
     });

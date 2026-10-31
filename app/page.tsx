@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import PanoramaViewer from "./PanoramaViewer";
+import { isValidName, isValidTelegram, NAME_MAX_LENGTH } from "@/lib/lead";
 
 const SHOW_REVIEWS = false;
 
@@ -390,13 +391,6 @@ export default function Home() {
 
             <LeadForm />
 
-            <p className="form-note">
-              Оставляя заявку, вы соглашаетесь на связь через Telegram и с{" "}
-              <a href="/privacy" style={{ textDecoration: "underline" }}>
-                политикой обработки персональных данных
-              </a>
-              .
-            </p>
           </div>
         </section>
       </main>
@@ -428,6 +422,7 @@ function LeadForm() {
   const [error, setError] = useState<string | null>(null);
   const [nameInvalid, setNameInvalid] = useState(false);
   const [telegramInvalid, setTelegramInvalid] = useState(false);
+  const [consentInvalid, setConsentInvalid] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -437,20 +432,23 @@ function LeadForm() {
     const name = (form.elements.namedItem("name") as HTMLInputElement).value.trim();
     const telegram = (form.elements.namedItem("telegram") as HTMLInputElement).value.trim();
     const company = (form.elements.namedItem("company") as HTMLInputElement).value;
-    const telegramOk = /^@?[A-Za-z][A-Za-z0-9_]{4,31}$/.test(telegram);
+    const consent = (form.elements.namedItem("consent") as HTMLInputElement).checked;
+    const nameOk = isValidName(name);
+    const telegramOk = isValidTelegram(telegram);
 
-    setNameInvalid(!name);
+    setNameInvalid(!nameOk);
     setTelegramInvalid(!telegramOk);
+    setConsentInvalid(!consent);
     setError(null);
 
-    if (!name || !telegramOk) return;
+    if (!nameOk || !telegramOk || !consent) return;
 
     setSending(true);
     try {
       const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, telegram, company }),
+        body: JSON.stringify({ name, telegram, company, consent }),
       });
       const data = await res.json();
       if (data.ok) {
@@ -475,6 +473,7 @@ function LeadForm() {
             id="name"
             name="name"
             placeholder="Как к вам обращаться"
+            maxLength={NAME_MAX_LENGTH}
             required
             disabled={sending}
             style={nameInvalid ? { borderColor: "#D9634F" } : undefined}
@@ -488,6 +487,10 @@ function LeadForm() {
             id="telegram"
             name="telegram"
             placeholder="@username"
+            maxLength={33}
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             required
             disabled={sending}
             style={telegramInvalid ? { borderColor: "#D9634F" } : undefined}
@@ -499,6 +502,25 @@ function LeadForm() {
           <label htmlFor="company">Компания</label>
           <input type="text" id="company" name="company" tabIndex={-1} autoComplete="off" />
         </div>
+        <label className={`consent${consentInvalid ? " is-invalid" : ""}`}>
+          <input
+            type="checkbox"
+            name="consent"
+            disabled={sending}
+            onChange={() => setConsentInvalid(false)}
+          />
+          <span>
+            Даю{" "}
+            <a href="/consent" target="_blank" rel="noopener">
+              согласие на обработку персональных данных
+            </a>{" "}
+            и связь через Telegram. С{" "}
+            <a href="/privacy" target="_blank" rel="noopener">
+              политикой обработки персональных данных
+            </a>{" "}
+            ознакомлен(а).
+          </span>
+        </label>
         <button type="submit" className="btn btn-primary btn-block" disabled={sending}>
           {sending ? "Отправляем…" : "Отправить заявку"}
         </button>

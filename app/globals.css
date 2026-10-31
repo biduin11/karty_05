@@ -329,6 +329,16 @@ strong{color:inherit;font-weight:700;}
 .field input::placeholder{color:var(--muted-dark);}
 .field input:focus{border-color:var(--teal);}
 .field input:disabled{opacity:.6;}
+.consent{
+  display:flex;align-items:flex-start;gap:10px;margin:4px 0 16px;cursor:pointer;
+  font-size:12.5px;line-height:1.45;color:var(--muted-dark);
+}
+.consent input{
+  flex:none;width:18px;height:18px;margin-top:1px;accent-color:var(--teal);cursor:pointer;
+}
+.consent a{text-decoration:underline;color:inherit;}
+.consent.is-invalid{color:#D9634F;}
+.consent.is-invalid input{outline:1.5px solid #D9634F;outline-offset:1px;}
 .form-note{font-size:12.5px;color:var(--muted-dark);text-align:center;margin-top:14px;}
 .form-success{
   display:none;text-align:center;padding:18px 6px;font-family:var(--font-d);font-weight:600;color:var(--teal);
