@@ -19,6 +19,7 @@ Next.js (App Router) + TypeScript + Prisma + Neon. Форма заявки со�
 | `DATABASE_URL` | строка подключения к Neon (Postgres) |
 | `TELEGRAM_BOT_TOKEN` | токен Telegram-бота от @BotFather |
 | `TELEGRAM_CHAT_ID` | chat_id, куда бот шлёт уведомления о заявках |
+| `NEXT_PUBLIC_SITE_URL` | боевой адрес сайта, например `https://karty05.ru` — для canonical, sitemap, robots, Open Graph. На Vercel без него берётся production-домен проекта |
 
 ## Локальный запуск
 
@@ -94,3 +95,17 @@ npm run dev
 - `/consent` (`app/consent/page.tsx`) — отдельное согласие на обработку ПДн (ст. 9 152-ФЗ).
   В форме — обязательный неотмеченный чекбокс со ссылками на оба документа.
 - Реквизиты оператора хранятся в одном месте — `lib/operator.ts`.
+
+## SEO и производительность
+
+- `app/robots.ts`, `app/sitemap.ts` — `/robots.txt` и `/sitemap.xml` (адрес из `lib/site.ts`).
+- `app/icon.svg`, `app/apple-icon.png` — фавикон и иконка для iOS.
+- `app/opengraph-image.png` — превью при отправке ссылки в мессенджеры и соцсети.
+- На главной — структурированные данные JSON-LD: `ProfessionalService` (услуги и цены)
+  и `FAQPage` (вопросы берутся из `lib/faq.ts` — там же их и редактировать).
+- Шрифты подключены через `next/font` и раздаются с самого сайта, без запросов к Google.
+- Главная — серверный компонент; на клиенте работают только `LeadForm`, `PageEffects`
+  (анимации, верхняя плашка) и `PanoramaViewer`.
+- Панорама (4096×2048 — больше многие телефоны не отображают) и скрипт Pannellum
+  загружаются, только когда пользователь долистал до блока.
+- Скриншоты «было/стало» — через `next/image` (WebP/AVIF, нужный размер под экран).

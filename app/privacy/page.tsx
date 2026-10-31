@@ -4,6 +4,8 @@ import { DocBlock, DocLayout, DocList, OperatorDetails } from "../DocLayout";
 export const metadata: Metadata = {
   title: "Политика обработки персональных данных — Карты 05",
   description: "Политика в отношении обработки персональных данных пользователей сайта «Карты 05».",
+  alternates: { canonical: "/privacy" },
+  openGraph: { url: "/privacy" },
 };
 
 export default function PrivacyPage() {

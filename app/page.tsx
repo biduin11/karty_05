@@ -1,57 +1,62 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import PanoramaViewer from "./PanoramaViewer";
-import { isValidName, isValidTelegram, NAME_MAX_LENGTH } from "@/lib/lead";
+import LeadForm from "./LeadForm";
+import PageEffects from "./PageEffects";
+import { FAQ } from "@/lib/faq";
+import { OPERATOR } from "@/lib/operator";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ProfessionalService",
+      "@id": `${SITE_URL}/#business`,
+      name: SITE_NAME,
+      description: SITE_DESCRIPTION,
+      url: `${SITE_URL}/`,
+      image: `${SITE_URL}/opengraph-image.png`,
+      logo: `${SITE_URL}/icon.svg`,
+      email: OPERATOR.email,
+      priceRange: "7 000 – 20 000 ₽",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Махачкала",
+        addressRegion: "Республика Дагестан",
+        addressCountry: "RU",
+      },
+      areaServed: [
+        { "@type": "City", name: "Махачкала" },
+        { "@type": "AdministrativeArea", name: "Республика Дагестан" },
+      ],
+      makesOffer: [
+        { name: "Оформление карточки на Яндекс Картах и 2ГИС", price: 20000 },
+        { name: "Панорама 360° (за точку)", price: 7000 },
+        { name: "Продвижение и поддержка карточки (в месяц)", price: 9000 },
+      ].map(({ name, price }) => ({
+        "@type": "Offer",
+        priceCurrency: "RUB",
+        price,
+        itemOffered: { "@type": "Service", name },
+      })),
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: FAQ.map(({ q, a }) => ({
+        "@type": "Question",
+        name: q,
+        acceptedAnswer: { "@type": "Answer", text: a },
+      })),
+    },
+  ],
+};
 
 const SHOW_REVIEWS = false;
 
 export default function Home() {
-  const topbarRef = useRef<HTMLDivElement>(null);
-  const heroRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const revealEls = document.querySelectorAll(".reveal");
-    let io: IntersectionObserver | undefined;
-    if ("IntersectionObserver" in window) {
-      io = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              e.target.classList.add("in");
-              io!.unobserve(e.target);
-            }
-          });
-        },
-        { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
-      );
-      revealEls.forEach((el) => io!.observe(el));
-    } else {
-      revealEls.forEach((el) => el.classList.add("in"));
-    }
-
-    const topbar = topbarRef.current;
-    const hero = heroRef.current;
-    let heroObserver: IntersectionObserver | undefined;
-    if (topbar && hero) {
-      heroObserver = new IntersectionObserver(
-        ([entry]) => {
-          topbar.classList.toggle("is-visible", !entry.isIntersecting);
-        },
-        { threshold: 0 }
-      );
-      heroObserver.observe(hero);
-    }
-
-    return () => {
-      io?.disconnect();
-      heroObserver?.disconnect();
-    };
-  }, []);
-
   return (
     <>
-      <div className="topbar" id="topbar" ref={topbarRef}>
+      <div className="topbar" id="topbar">
         <span className="plate plate--sm">
           <span className="plate__stripe">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
@@ -66,9 +71,15 @@ export default function Home() {
         <a href="#form" className="btn btn-primary">Оставить заявку</a>
       </div>
 
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
+      />
+      <PageEffects />
+
       <main>
         {/* ============ HERO ============ */}
-        <section className="hero" ref={heroRef}>
+        <section className="hero" id="hero">
           <div className="container">
             <div className="hero__top">
               <span className="plate">
@@ -217,13 +228,25 @@ export default function Home() {
             <div className="frame">
               <div className="frame__label">Было</div>
               <div className="frame__body frame__body--photo">
-                <img src="/images/before-after/2gis-card.jpg" alt="Карточка в 2ГИС" />
+                <Image
+                  src="/images/before-after/2gis-card.jpg"
+                  alt="Карточка в 2ГИС до оформления"
+                  width={419}
+                  height={1131}
+                  sizes="(max-width: 600px) 78vw, 420px"
+                />
               </div>
             </div>
             <div className="frame frame--after">
               <div className="frame__label">Стало</div>
               <div className="frame__body frame__body--photo">
-                <img src="/images/before-after/yandex-card.jpg" alt="Карточка на Яндекс Картах" />
+                <Image
+                  src="/images/before-after/yandex-card.jpg"
+                  alt="Карточка на Яндекс Картах после оформления"
+                  width={863}
+                  height={1822}
+                  sizes="(max-width: 600px) 78vw, 420px"
+                />
               </div>
             </div>
           </div>
@@ -353,30 +376,12 @@ export default function Home() {
               <h2>FAQ</h2>
             </div>
             <div className="reveal">
-              <details className="faq-item">
-                <summary>Сколько времени занимает оформление карточки?</summary>
-                <p>Обычно от заявки до публикации проходит несколько дней — зависит от того, нужна ли выездная съёмка и панорама.</p>
-              </details>
-              <details className="faq-item">
-                <summary>Нужно ли мне самому что-то делать?</summary>
-                <p>С вашей стороны — впустить нас на съёмку и подтвердить финальные тексты. Всё оформление, публикацию и настройку берём на себя.</p>
-              </details>
-              <details className="faq-item">
-                <summary>У меня уже есть карточка, но она старая. Это ок?</summary>
-                <p>Да, это самый частый случай. Проведём аудит текущей карточки, обновим фото, описание и режим работы, а не будем создавать дубль.</p>
-              </details>
-              <details className="faq-item">
-                <summary>Панораму сложно снимать, нужно закрывать заведение?</summary>
-                <p>Нет, съёмка занимает от 30 минут до пары часов в зависимости от площади и обычно проходит без остановки работы.</p>
-              </details>
-              <details className="faq-item">
-                <summary>Как быстро будет заметен результат в поиске?</summary>
-                <p>Зависит от ниши и конкуренции в районе — обычно позиции подтягиваются в течение нескольких недель после публикации и начала продвижения.</p>
-              </details>
-              <details className="faq-item">
-                <summary>Что если с карточкой уже есть проблема — блокировка, модерация?</summary>
-                <p>Разберёмся отдельно на созвоне: часто это решается корректным заполнением карточки и подтверждением прав на организацию.</p>
-              </details>
+              {FAQ.map(({ q, a }) => (
+                <details className="faq-item" key={q}>
+                  <summary>{q}</summary>
+                  <p>{a}</p>
+                </details>
+              ))}
             </div>
           </div>
         </section>
@@ -412,126 +417,5 @@ export default function Home() {
         </div>
       </footer>
     </>
-  );
-}
-
-function LeadForm() {
-  const formRef = useRef<HTMLFormElement>(null);
-  const [sent, setSent] = useState(false);
-  const [sending, setSending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [nameInvalid, setNameInvalid] = useState(false);
-  const [telegramInvalid, setTelegramInvalid] = useState(false);
-  const [consentInvalid, setConsentInvalid] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = formRef.current;
-    if (!form) return;
-
-    const name = (form.elements.namedItem("name") as HTMLInputElement).value.trim();
-    const telegram = (form.elements.namedItem("telegram") as HTMLInputElement).value.trim();
-    const company = (form.elements.namedItem("company") as HTMLInputElement).value;
-    const consent = (form.elements.namedItem("consent") as HTMLInputElement).checked;
-    const nameOk = isValidName(name);
-    const telegramOk = isValidTelegram(telegram);
-
-    setNameInvalid(!nameOk);
-    setTelegramInvalid(!telegramOk);
-    setConsentInvalid(!consent);
-    setError(null);
-
-    if (!nameOk || !telegramOk || !consent) return;
-
-    setSending(true);
-    try {
-      const res = await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, telegram, company, consent }),
-      });
-      const data = await res.json();
-      if (data.ok) {
-        setSent(true);
-      } else {
-        setError(data.error || "Не получилось отправить заявку. Попробуйте ещё раз.");
-      }
-    } catch {
-      setError("Не получилось отправить заявку. Проверьте связь и попробуйте ещё раз.");
-    } finally {
-      setSending(false);
-    }
-  }
-
-  return (
-    <div className={`form-card reveal${sent ? " is-sent" : ""}`} id="formCard">
-      <form id="leadForm" noValidate ref={formRef} onSubmit={handleSubmit}>
-        <div className="field">
-          <label htmlFor="name">Имя</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            placeholder="Как к вам обращаться"
-            maxLength={NAME_MAX_LENGTH}
-            required
-            disabled={sending}
-            style={nameInvalid ? { borderColor: "#D9634F" } : undefined}
-            onInput={() => setNameInvalid(false)}
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="telegram">Telegram</label>
-          <input
-            type="text"
-            id="telegram"
-            name="telegram"
-            placeholder="@username"
-            maxLength={33}
-            autoCapitalize="none"
-            autoCorrect="off"
-            spellCheck={false}
-            required
-            disabled={sending}
-            style={telegramInvalid ? { borderColor: "#D9634F" } : undefined}
-            onInput={() => setTelegramInvalid(false)}
-          />
-        </div>
-        {/* honeypot — скрыто от пользователей, ловит ботов */}
-        <div className="hp-field" aria-hidden="true">
-          <label htmlFor="company">Компания</label>
-          <input type="text" id="company" name="company" tabIndex={-1} autoComplete="off" />
-        </div>
-        <label className={`consent${consentInvalid ? " is-invalid" : ""}`}>
-          <input
-            type="checkbox"
-            name="consent"
-            disabled={sending}
-            onChange={() => setConsentInvalid(false)}
-          />
-          <span>
-            Даю{" "}
-            <a href="/consent" target="_blank" rel="noopener">
-              согласие на обработку персональных данных
-            </a>{" "}
-            и связь через Telegram. С{" "}
-            <a href="/privacy" target="_blank" rel="noopener">
-              политикой обработки персональных данных
-            </a>{" "}
-            ознакомлен(а).
-          </span>
-        </label>
-        <button type="submit" className="btn btn-primary btn-block" disabled={sending}>
-          {sending ? "Отправляем…" : "Отправить заявку"}
-        </button>
-        <div className={`form-error${error ? " show" : ""}`}>{error}</div>
-      </form>
-      <div className="form-success" id="formSuccess">
-        Заявка отправлена ✓<br />
-        <span style={{ fontFamily: "var(--font-b)", fontWeight: 400, color: "var(--muted-dark)", fontSize: "14px" }}>
-          Свяжемся с вами в течение дня
-        </span>
-      </div>
-    </div>
   );
 }

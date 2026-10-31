@@ -5,6 +5,8 @@ import { DocBlock, DocLayout, DocList, OperatorDetails } from "../DocLayout";
 export const metadata: Metadata = {
   title: "Согласие на обработку персональных данных — Карты 05",
   description: "Согласие пользователя сайта «Карты 05» на обработку персональных данных.",
+  alternates: { canonical: "/consent" },
+  openGraph: { url: "/consent" },
 };
 
 export default function ConsentPage() {
