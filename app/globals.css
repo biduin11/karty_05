@@ -152,8 +152,44 @@ strong{color:inherit;font-weight:700;}
 @keyframes ring{0%{opacity:.55;r:6;}100%{opacity:0;r:22;}}
 
 /* ---------- reveal on scroll ---------- */
-.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease;}
-.reveal.in{opacity:1;transform:translateY(0);}
+:root{--ease-out:cubic-bezier(.22,1,.36,1);--ease-pop:cubic-bezier(.34,1.56,.64,1);}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .8s var(--ease-out);}
+.reveal.in{opacity:1;transform:none;}
+.reveal--left{transform:translateX(-36px) rotate(-1.5deg);}
+.reveal--right{transform:translateX(36px) rotate(1.5deg);}
+
+/* stagger: the container stays put, its children enter one after another */
+.reveal.stagger{opacity:1;transform:none;}
+.stagger > *{
+  opacity:0;transform:translateY(18px);
+  transition:opacity .6s ease,transform .7s var(--ease-out);
+  transition-delay:calc(var(--i,0) * 90ms);
+}
+.stagger.in > *{opacity:1;transform:none;}
+.stagger--right > *{transform:translateX(60px) rotate(2deg);}
+.stagger--pop > *{transform:translateY(26px) scale(.94);transition-timing-function:ease,var(--ease-pop);}
+.route-list.stagger > *{transform:translateX(-28px);}
+.route-list .route-row__mark{transform:scale(.4) rotate(-25deg);transition:transform .6s var(--ease-pop);transition-delay:calc(var(--i,0) * 90ms + 180ms);}
+.route-list.in .route-row__mark{transform:none;}
+.problem-card__icon{transition:transform .6s var(--ease-pop) .25s;transform:scale(.5);}
+.problem-card.in .problem-card__icon{transform:none;}
+
+/* top scroll progress — a "route" filling as you read */
+.scroll-progress{
+  position:fixed;top:0;left:0;right:0;height:3px;z-index:70;pointer-events:none;
+  background:linear-gradient(90deg,var(--teal),var(--gold));
+  transform-origin:0 50%;transform:scaleX(var(--scroll,0));
+}
+
+/* hero parallax: route drifts down and fades, headline lifts slightly */
+.hero__visual{transform:translateY(calc(var(--hero,0) * 80px));opacity:calc(1 - var(--hero,0) * 1.4);will-change:transform,opacity;}
+.hero h1,.hero .lead{transform:translateY(calc(var(--hero,0) * -24px));}
+
+@media (prefers-reduced-motion: reduce){
+  .reveal,.reveal--left,.reveal--right,.stagger > *,
+  .route-list .route-row__mark,.problem-card__icon{opacity:1 !important;transform:none !important;}
+  .hero__visual,.hero h1,.hero .lead{transform:none !important;opacity:1 !important;}
+}
 
 /* ---------- problem cards ---------- */
 .problem-list{display:flex;flex-direction:column;gap:14px;}
@@ -222,7 +258,20 @@ strong{color:inherit;font-weight:700;}
   content:"";position:absolute;left:14px;top:6px;bottom:6px;width:1.5px;
   background:repeating-linear-gradient(to bottom, var(--plate-blue) 0 6px, transparent 6px 12px);
 }
+.timeline::after{
+  content:"";position:absolute;left:14px;top:6px;bottom:6px;width:2px;border-radius:2px;
+  background:linear-gradient(to bottom,var(--teal),var(--gold));
+  transform-origin:top;transform:scaleY(var(--tl,0));
+}
 .tl-item{position:relative;padding-bottom:30px;}
+.tl-num{transition:background .35s ease,color .35s ease,box-shadow .35s ease;z-index:1;}
+.tl-item.reached .tl-num{
+  background:var(--gold);color:var(--ink);box-shadow:0 0 0 4px rgba(242,169,59,.2);
+  animation:tlPop .5s var(--ease-pop);
+}
+.tl-item h3,.tl-item p{transition:opacity .4s ease;}
+.tl-item:not(.reached) h3,.tl-item:not(.reached) p{opacity:.55;}
+@keyframes tlPop{0%{transform:scale(1);}45%{transform:scale(1.25);}100%{transform:scale(1);}}
 .tl-item:last-child{padding-bottom:0;}
 .tl-num{
   position:absolute;left:-39px;top:1px;width:30px;height:24px;border-radius:6px;

@@ -76,6 +76,7 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
       />
       <PageEffects />
+      <div className="scroll-progress" id="scrollProgress" aria-hidden="true" />
 
       <main>
         {/* ============ HERO ============ */}
@@ -134,21 +135,21 @@ export default function Home() {
               <h2>Вот что теряет бизнес без нормальной карточки</h2>
             </div>
             <div className="problem-list">
-              <div className="problem-card reveal">
+              <div className="problem-card reveal reveal--left">
                 <div className="problem-card__icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 7h3l2-3h6l2 3h3v12H4z" /><circle cx="12" cy="13" r="3.5" /></svg>
                 </div>
                 <strong>Пустая карточка = пустой зал</strong>
                 <p>Ноль фото или три размытых снимка на телефон трёхлетней давности. Человек решает, ехать к вам или нет, за пару секунд — и чаще выбирает того, у кого есть что посмотреть.</p>
               </div>
-              <div className="problem-card reveal">
+              <div className="problem-card reveal reveal--right">
                 <div className="problem-card__icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18" /><path d="M7 15l4-5 3 3 5-7" /></svg>
                 </div>
                 <strong>Конкурент стоит выше — хотя сервис хуже</strong>
                 <p>Позиция в поиске и на картах зависит от того, насколько заполнена карточка. У соседа фото, отзывы и актуальный режим работы — и он выше вас, даже если у вас лучше.</p>
               </div>
-              <div className="problem-card reveal">
+              <div className="problem-card reveal reveal--left">
                 <div className="problem-card__icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.3" /></svg>
                 </div>
@@ -166,7 +167,7 @@ export default function Home() {
               <span className="eyebrow">Что мы делаем</span>
               <h2>Всё, что нужно карточке, чтобы приводить клиентов</h2>
             </div>
-            <div className="route-list reveal">
+            <div className="route-list reveal stagger">
               <div className="route-row">
                 <div className="route-row__mark">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 7h3l2-3h6l2 3h3v12H4z" /><circle cx="12" cy="13" r="3.5" /></svg>
@@ -224,7 +225,7 @@ export default function Home() {
               <h2>Так выглядит карточка до и после</h2>
             </div>
           </div>
-          <div className="swipe reveal">
+          <div className="swipe reveal stagger stagger--right">
             <div className="frame">
               <div className="frame__label">Было</div>
               <div className="frame__body frame__body--photo">
@@ -260,7 +261,7 @@ export default function Home() {
               <span className="eyebrow">Как это происходит</span>
               <h2>Пять шагов от заявки до готовой карточки</h2>
             </div>
-            <div className="timeline reveal">
+            <div className="timeline reveal" id="timeline">
               <div className="tl-item">
                 <div className="tl-num">1</div>
                 <h3>Заявка</h3>
@@ -339,26 +340,26 @@ export default function Home() {
               <span className="eyebrow">Сколько это стоит</span>
               <h2>Цены</h2>
             </div>
-            <div className="price-list reveal">
+            <div className="price-list reveal stagger stagger--pop">
               <div className="price-card price-card--feat">
                 <span className="price-card__tag">Чаще всего заказывают</span>
                 <div className="price-card__top">
                   <h3>Оформление карточки</h3>
-                  <div className="price-card__amount">20 000 ₽<span><br />разово</span></div>
+                  <div className="price-card__amount"><span data-count="20000">20 000</span> ₽<span><br />разово</span></div>
                 </div>
                 <p>Фото, описание, категории, услуги, режим работы, публикация на Яндекс Картах и в 2ГИС.</p>
               </div>
               <div className="price-card">
                 <div className="price-card__top">
                   <h3>Панорама 360°</h3>
-                  <div className="price-card__amount">7 000 ₽<span><br />за точку</span></div>
+                  <div className="price-card__amount"><span data-count="7000">7 000</span> ₽<span><br />за точку</span></div>
                 </div>
                 <p>3D-тур по вашему заведению внутри карточки.</p>
               </div>
               <div className="price-card">
                 <div className="price-card__top">
                   <h3>Продвижение и поддержка</h3>
-                  <div className="price-card__amount">9 000 ₽<span><br />в месяц</span></div>
+                  <div className="price-card__amount"><span data-count="9000">9 000</span> ₽<span><br />в месяц</span></div>
                 </div>
                 <p>Работа над позицией в поиске, публикация новостей, помощь с отзывами.</p>
               </div>
@@ -375,7 +376,7 @@ export default function Home() {
               <span className="eyebrow">Частые вопросы</span>
               <h2>FAQ</h2>
             </div>
-            <div className="reveal">
+            <div className="reveal stagger">
               {FAQ.map(({ q, a }) => (
                 <details className="faq-item" key={q}>
                   <summary>{q}</summary>
