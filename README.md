@@ -5,7 +5,7 @@ Next.js (App Router) + TypeScript + Prisma + Neon. Форма заявки со�
 
 ## Стек
 
-- Next.js 14 (App Router), TypeScript
+- Next.js 16 (App Router), React 19, TypeScript
 - Prisma + Neon (Postgres)
 - Деплой на Vercel
 
